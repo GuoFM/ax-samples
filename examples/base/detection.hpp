@@ -3037,6 +3037,112 @@ namespace detection
                 feat_ptr += (cls_num + 4 * reg_max + 1);
             }
         }
+        static void generate_proposals_yolo26_obb(int stride, const float* feat_box, const float* feat_cls, const float* feat_angle,
+                                                  float prob_threshold, std::vector<Object>& objects,
+                                                  int letterbox_cols, int letterbox_rows, int cls_num = 15,
+                                                  int box_channels = 4, int angle_ch = 1)
+        {
+            const int feat_w = letterbox_cols / stride;
+            const int feat_h = letterbox_rows / stride;
+
+            int reg_max = 0;
+            if (box_channels > 4 && (box_channels % 4) == 0)
+            {
+                reg_max = box_channels / 4;
+            }
+
+            const float p = std::min(std::max(prob_threshold, 1e-6f), 1.f - 1e-6f);
+            const float conf_raw = std::log(p / (1.f - p));
+
+            const int cls_stride_elems = std::max(1, cls_num);
+            const int ang_stride_elems = std::max(1, angle_ch);
+
+            std::vector<float> dfl_sm_buf;
+            if (reg_max > 1)
+            {
+                dfl_sm_buf.resize(reg_max);
+            }
+
+            for (int h = 0; h < feat_h; ++h)
+            {
+                for (int w = 0; w < feat_w; ++w)
+                {
+                    const float* cls_ptr = feat_cls + (h * feat_w + w) * cls_stride_elems;
+                    int best_c = 0;
+                    float best_logit = -FLT_MAX;
+                    if (cls_num <= 1)
+                    {
+                        best_logit = cls_ptr[0];
+                        best_c = 0;
+                    }
+                    else
+                    {
+                        for (int c = 0; c < cls_num; ++c)
+                        {
+                            float v = cls_ptr[c];
+                            if (v > best_logit)
+                            {
+                                best_logit = v;
+                                best_c = c;
+                            }
+                        }
+                    }
+                    if (best_logit < conf_raw)
+                    {
+                        continue;
+                    }
+                    const float score = sigmoid(best_logit);
+
+                    const float* box_ptr = feat_box + (h * feat_w + w) * box_channels;
+                    float l, t, r, b;
+                    if (reg_max > 1)
+                    {
+                        float pred_ltrb[4];
+                        for (int k = 0; k < 4; ++k)
+                        {
+                            float dis = softmax(box_ptr + k * reg_max, dfl_sm_buf.data(), reg_max);
+                            pred_ltrb[k] = dis * stride;
+                        }
+                        l = pred_ltrb[0];
+                        t = pred_ltrb[1];
+                        r = pred_ltrb[2];
+                        b = pred_ltrb[3];
+                    }
+                    else
+                    {
+                        l = box_ptr[0] * stride;
+                        t = box_ptr[1] * stride;
+                        r = box_ptr[2] * stride;
+                        b = box_ptr[3] * stride;
+                    }
+
+                    const float angle = feat_angle[(h * feat_w + w) * ang_stride_elems];
+
+                    const float pb_cx = (w + 0.5f) * stride;
+                    const float pb_cy = (h + 0.5f) * stride;
+
+                    const float cosA = std::cos(angle);
+                    const float sinA = std::sin(angle);
+
+                    const float x = (r - l) * 0.5f;
+                    const float y = (b - t) * 0.5f;
+                    const float xc = x * cosA - y * sinA + pb_cx;
+                    const float yc = x * sinA + y * cosA + pb_cy;
+                    const float bw = l + r;
+                    const float bh = t + b;
+
+                    Object obj;
+                    obj.rect.x = xc;
+                    obj.rect.y = yc;
+                    obj.rect.width = bw;
+                    obj.rect.height = bh;
+                    obj.label = best_c;
+                    obj.prob = score;
+                    obj.angle = angle;
+                    objects.push_back(obj);
+                }
+            }
+        }
         static void draw_objects_obb(const cv::Mat& bgr, const std::vector<Object>& objects, const char** class_names, const char* output_name, int thickness = 1)
         {
             static const std::vector<cv::Scalar> COCO_COLORS = {

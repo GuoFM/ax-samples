@@ -8,6 +8,7 @@ AX-Samples 将不断更新最流行的、实用的、有趣的示例代码。
   - [YOLOv8s](#YOLOv8s)
   - [YOLO11](#YOLO11)
   - [YOLO26](#YOLO26)
+  - [YOLO26-OBB](#YOLO26-OBB)
 - 物体分割
   - [YOLOv5-seg](#YOLOv5-seg)
   - [YOLOv8-seg](#YOLOv8-seg)
@@ -708,6 +709,35 @@ detection num: 4
 --------------------------------------
 ```
 ![YOLO26-seg](../../docs/ax650/yolo26_seg_out.jpg)
+
+
+
+### YOLO26-OBB
+```
+root@ax650:~/fangming/obb# ./ax_yolo26_obb -m yolo26l-obb_npu3.axmodel -i boats.jpg
+--------------------------------------
+model file : yolo26l-obb_npu3.axmodel
+image file : boats.jpg
+img_h, img_w : 1024 1024
+--------------------------------------
+Engine creating handle is done.
+Engine creating context is done.
+Engine get io info is done.
+Engine alloc io is done.
+Engine push input is done.
+--------------------------------------
+post process cost time:5.54 ms
+--------------------------------------
+Repeat 1 times, avg time 37.10 ms, max_time 37.10 ms, min_time 37.10 ms
+--------------------------------------
+detection num: 174
+ 1:  93%, [ 783,  120,  117,   33,  +20.6 deg], ship
+ 1:  90%, [1792,  575,  114,   35,  +26.3 deg], ship
+...
+ 1:  25%, [1584,  456,  102,   52,  +24.1 deg], ship
+--------------------------------------
+```
+![YOLO26-OBB](../../docs/ax650/yolo26_obb_out.jpg)
 
 #### YOLO11-seg
 ```
