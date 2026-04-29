@@ -36,6 +36,7 @@ axera_example(ax_yolo11_pose ax_yolo11_pose_steps.cc)
 axera_example(ax_yolo26 ax_yolo26_steps.cc)
 axera_example(ax_yolo26_pose ax_yolo26_pose_steps.cc)
 axera_example(ax_yolo26_seg ax_yolo26_seg_steps.cc)
+axera_example(ax_yolo26_obb ax_yolo26_obb_steps.cc)
 axera_example(ax_yolo11n_classification ax_yolo11n_classification_steps.cc)
 
 axera_example(ax_depth_anything ax_depth_anythingv2_steps.cc)
