@@ -20,6 +20,7 @@ AX-Samples 将不断更新最流行的、实用的、有趣的示例代码。
   - [YOLOv8-pose](#YOLOv8-pose)
   - [YOLO11-pose](#YOLO11-pose)
   - [YOLO26-pose](#YOLO26-pose)
+  - [RTMPose-M](#RTMPose-M)
 - 立体视觉
   - [IGEV-plusplus](#IGEV-plusplus)
 - 语义分割
@@ -682,6 +683,28 @@ detection num: 3
 --------------------------------------
 ```
 ![YOLO26-pose](../../docs/ax650/yolo26_pose_out.jpg)
+
+### RTMPose-M
+```
+root@ax650:~/data# ./ax_rtmpose -m rtmpose_m_npu3.axmodel -i test.jpg
+--------------------------------------
+model file : rtmpose_m_npu3.axmodel
+image file : test.jpg
+img_h, img_w : 256 192
+--------------------------------------
+Engine creating handle is done.
+Engine get io info is done.
+Engine alloc io is done.
+Engine push input is done.
+--------------------------------------
+post process cost time:0.07 ms
+--------------------------------------
+Repeat 1 times, avg time 19.40 ms, max_time 19.40 ms, min_time 19.40 ms
+--------------------------------------
+kpts above 0.3: 17/17
+Saved: rtmpose_out.jpg
+```
+![RTMPose-M](../../docs/ax650/rtmpose_out.jpg)
 
 ### YOLO26-seg
 ```
