@@ -9,6 +9,7 @@ AX-Samples 将不断更新最流行的、实用的、有趣的示例代码。
   - [YOLO11](#YOLO11)
   - [YOLO26](#YOLO26)
   - [YOLO26-OBB](#YOLO26-OBB)
+  - [YOLO11-OBB](#YOLO11-OBB)
 - 物体分割
   - [YOLOv5-seg](#YOLOv5-seg)
   - [YOLOv8-seg](#YOLOv8-seg)
@@ -761,6 +762,35 @@ detection num: 174
 --------------------------------------
 ```
 ![YOLO26-OBB](../../docs/ax650/yolo26_obb_out.jpg)
+
+### YOLO11-OBB
+```
+root@ax650:~/11obb# ./ax_yolo11_obb -m yolo11l-obb_640x640_npu3.axmodel -i boats.jpg -g 640,640
+--------------------------------------
+model file : yolo11l-obb_640x640_npu3.axmodel
+image file : boats.jpg
+img_h, img_w : 640 640
+--------------------------------------
+Engine creating handle is done.
+Engine creating context is done.
+Engine get io info is done.
+Engine alloc io is done.
+Engine push input is done.
+--------------------------------------
+post process cost time:52.30 ms
+--------------------------------------
+Repeat 1 times, avg time 11.56 ms, max_time 11.56 ms, min_time 11.56 ms
+--------------------------------------
+detection num: 176
+ 1:  86%, [1105,  570,  121,   38,  +21.5 deg], ship
+ 1:  86%, [1408,  534,  101,   33,  +19.4 deg], ship
+ 1:  86%, [1621, 1003,  121,   35,  +26.8 deg], ship
+ 1:  86%, [ 699,  335,  121,   37,  +20.9 deg], ship
+...
+ 7:  27%, [1166,  243,  217,  685,  +22.2 deg], harbor
+--------------------------------------
+```
+![YOLO11-OBB](../../docs/ax650/yolo11_obb_out.jpg)
 
 #### YOLO11-seg
 ```
